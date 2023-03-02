@@ -1,10 +1,10 @@
-package pl.gunak00.rentacarbackend.service;
+package pl.gunak00.rentacarbackend.car.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.gunak00.rentacarbackend.exceptions.CarNotFoundException;
-import pl.gunak00.rentacarbackend.model.Car;
-import pl.gunak00.rentacarbackend.repository.CarRepository;
+import pl.gunak00.rentacarbackend.car.model.Car;
+import pl.gunak00.rentacarbackend.car.exceptions.CarNotFoundException;
+import pl.gunak00.rentacarbackend.car.repository.CarRepository;
 
 import java.util.List;
 

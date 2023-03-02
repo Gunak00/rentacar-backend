@@ -1,10 +1,10 @@
-package pl.gunak00.rentacarbackend.controller;
+package pl.gunak00.rentacarbackend.car.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.gunak00.rentacarbackend.model.Car;
-import pl.gunak00.rentacarbackend.service.CarService;
+import pl.gunak00.rentacarbackend.car.model.Car;
+import pl.gunak00.rentacarbackend.car.service.CarService;
 
 import java.util.List;
 

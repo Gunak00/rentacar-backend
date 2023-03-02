@@ -1,13 +1,13 @@
-package pl.gunak00.rentacarbackend.model;
+package pl.gunak00.rentacarbackend.car.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pl.gunak00.rentacarbackend.enums.CarDriveType;
-import pl.gunak00.rentacarbackend.enums.CarFuelType;
-import pl.gunak00.rentacarbackend.enums.CarGearboxType;
+import pl.gunak00.rentacarbackend.car.enums.CarDriveType;
+import pl.gunak00.rentacarbackend.car.enums.CarFuelType;
+import pl.gunak00.rentacarbackend.car.enums.CarGearboxType;
 
 import java.io.Serializable;
 
