@@ -1,5 +1,6 @@
-package pl.gunak00.rentacarbackend.user.configuration;
+package pl.gunak00.rentacarbackend.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,20 +18,21 @@ import pl.gunak00.rentacarbackend.user.model.User;
 import pl.gunak00.rentacarbackend.user.repository.UserRepo;
 
 @Configuration
-public class SecurityConfig {
+public class SecurityConfiguration {
 
     private final UserRepo userRepo;
 
-    public SecurityConfig(UserRepo userRepo) {
+    @Autowired
+    public SecurityConfiguration(UserRepo userRepo) {
         this.userRepo = userRepo;
     }
 
     //To refactor
-    @EventListener(ApplicationReadyEvent.class)
-    public void saveUser(){
-        User user = new User("pkonwa00@gmail.com", getBcryptPasswordEncoder().encode("qwertyuiop"));
-        userRepo.save(user);
-    }
+//    @EventListener(ApplicationReadyEvent.class)
+//    public void saveUser(){
+//        User user = new User("pkonwa00@gmail.com", getBcryptPasswordEncoder().encode("qwertyuiop"));
+//        userRepo.save(user);
+//    }
 
     @Bean
     public UserDetailsService userDetailsService(){
@@ -38,6 +40,7 @@ public class SecurityConfig {
                 .orElseThrow(() -> new UsernameNotFoundException("User with email not found: " + username));
     }
 
+    @Bean
     public PasswordEncoder getBcryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
@@ -49,10 +52,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        //http.csrf().disable();
+        http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests()
-                .requestMatchers("/login").permitAll();
+                .requestMatchers("/auth/login").permitAll()
+                .anyRequest().authenticated();
 
         return http.build();
     }
