@@ -9,9 +9,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 
 @NoArgsConstructor  //bezparametrowego konstruktora potrzebuje Spring Data JPA (ciut wieksze wyjasnienie ProjektCz1JWT 15:00min)
 @Setter
@@ -24,15 +26,17 @@ public class User implements UserDetails {  //implements UserDetails to be compa
     private Long id;
     private String email;
     private String password;
+    private String role;
 
-    public User(String email, String password) {
+    public User(String email, String password, String role) {
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.singleton(new SimpleGrantedAuthority(role));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package pl.gunak00.rentacarbackend.configuration;
 
+import com.auth0.jwt.JWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import pl.gunak00.rentacarbackend.user.enums.UserRole;
 import pl.gunak00.rentacarbackend.user.model.User;
 import pl.gunak00.rentacarbackend.user.repository.UserRepo;
 
@@ -21,17 +24,21 @@ import pl.gunak00.rentacarbackend.user.repository.UserRepo;
 public class SecurityConfiguration {
 
     private final UserRepo userRepo;
+    private final JwtTokenFilter jwtTokenFilter;
 
     @Autowired
-    public SecurityConfiguration(UserRepo userRepo) {
+    public SecurityConfiguration(UserRepo userRepo, JwtTokenFilter jwtTokenFilter) {
         this.userRepo = userRepo;
+        this.jwtTokenFilter = jwtTokenFilter;
     }
 
     //To refactor
 //    @EventListener(ApplicationReadyEvent.class)
 //    public void saveUser(){
-//        User user = new User("pkonwa00@gmail.com", getBcryptPasswordEncoder().encode("qwertyuiop"));
+//        User user = new User("pkonwa00@gmail.com", getBcryptPasswordEncoder().encode("admin123"), UserRole.ROLE_ADMIN.toString());
+//        User user2 = new User("anna@gmail.com", getBcryptPasswordEncoder().encode("qwertyuiop"), UserRole.ROLE_USER.toString());
 //        userRepo.save(user);
+//        userRepo.save(user2);
 //    }
 
     @Bean
@@ -56,7 +63,9 @@ public class SecurityConfiguration {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests()
                 .requestMatchers("/auth/login").permitAll()
+                .requestMatchers("/car/all").hasRole("ADMIN")
                 .anyRequest().authenticated();
+        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
