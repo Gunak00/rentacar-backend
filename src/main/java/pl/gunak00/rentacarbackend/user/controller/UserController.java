@@ -11,23 +11,34 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pl.gunak00.rentacarbackend.user.dto.AuthRequest;
 import pl.gunak00.rentacarbackend.user.dto.AuthResponse;
+import pl.gunak00.rentacarbackend.user.dto.UserDto;
+import pl.gunak00.rentacarbackend.user.enums.UserRole;
 import pl.gunak00.rentacarbackend.user.model.User;
+import pl.gunak00.rentacarbackend.user.services.UserService;
+
+import java.util.List;
 
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/user")
 public class UserController {
 
+    private final UserService userService;
     private final AuthenticationManager authenticationManager;
+
+    private final PasswordEncoder passwordEncoder;
     @Value("${jwt.secret}")
     private String secret;
 
     @Autowired
-    public UserController(AuthenticationManager authenticationManager) {
+    public UserController(AuthenticationManager authenticationManager, UserService userService, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
@@ -51,5 +62,39 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> getAllUsers(){
+        List<User> users = userService.findAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping("/find/{id}")
+    public ResponseEntity<User> getUser(@PathVariable("id") Long id){
+        User user = userService.findById(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<User> addUser(@RequestBody UserDto userDto){
+        User user = new User(userDto.getEmail(), userDto.getFirstName(), userDto.getLastName(),
+                passwordEncoder.encode(userDto.getPassword()), userDto.getDrivingLicenseNumber(),
+                userDto.getAge(), UserRole.ROLE_USER.toString());
+
+        User newUser = userService.addUser(user);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<User> updateUser(@RequestBody User user){
+        User updateUser = userService.updateUser(user);
+        return new ResponseEntity<>(updateUser, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id){
+        userService.deleteUser(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

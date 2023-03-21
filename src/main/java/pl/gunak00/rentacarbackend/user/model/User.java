@@ -25,12 +25,20 @@ public class User implements UserDetails {  //implements UserDetails to be compa
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String email;
+    private String firstName;
+    private String lastName;
     private String password;
+    private String drivingLicenseNumber;
+    private Integer age;
     private String role;
 
-    public User(String email, String password, String role) {
+    public User(String email, String firstName, String lastName, String password, String drivingLicenseNumber, Integer age, String role) {
         this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.password = password;
+        this.drivingLicenseNumber = drivingLicenseNumber;
+        this.age = age;
         this.role = role;
     }
 
@@ -74,7 +82,12 @@ public class User implements UserDetails {  //implements UserDetails to be compa
         return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", password='" + password + '\'' +
+                ", drivingLicenseNumber='" + drivingLicenseNumber + '\'' +
+                ", age=" + age +
+                ", role='" + role + '\'' +
                 '}';
     }
 }
