@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import pl.gunak00.rentacarbackend.user.enums.UserRole;
 import pl.gunak00.rentacarbackend.user.model.User;
 import pl.gunak00.rentacarbackend.user.repository.UserRepo;
@@ -27,22 +28,13 @@ public class SecurityConfiguration {
     private final JwtTokenFilter jwtTokenFilter;
 
     private final String[] requestForAll = { "/car/all", "/car/find/*", "/user/login", "/user/add", "user/find/*"};
+    private final String[] requestForUsers = {"user/find/*"};
 
     @Autowired
     public SecurityConfiguration(UserRepo userRepo, JwtTokenFilter jwtTokenFilter) {
         this.userRepo = userRepo;
         this.jwtTokenFilter = jwtTokenFilter;
     }
-
-    //To refactor
-//    @EventListener(ApplicationReadyEvent.class)
-//    public void saveUser(){
-//        User user = new User("pkonwa00@gmail.com", getBcryptPasswordEncoder().encode("admin123"), UserRole.ROLE_ADMIN.toString());
-//        User user2 = new User("anna@gmail.com", getBcryptPasswordEncoder().encode("qwertyuiop"), UserRole.ROLE_USER.toString());
-//        userRepo.save(user);
-//        userRepo.save(user2);
-//    }
-
     @Bean
     public UserDetailsService userDetailsService(){
         return username -> userRepo.findByEmail(username)
@@ -62,9 +54,11 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
+        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests()
                 .requestMatchers(requestForAll).permitAll()
+                .requestMatchers(requestForUsers).hasRole("USER")
                 .anyRequest().hasRole("ADMIN");
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
