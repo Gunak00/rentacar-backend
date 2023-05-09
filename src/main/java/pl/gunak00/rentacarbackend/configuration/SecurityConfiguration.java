@@ -17,9 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import pl.gunak00.rentacarbackend.user.enums.UserRole;
-import pl.gunak00.rentacarbackend.user.model.User;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import pl.gunak00.rentacarbackend.user.repository.UserRepo;
+
 
 @Configuration
 public class SecurityConfiguration {
@@ -27,7 +28,7 @@ public class SecurityConfiguration {
     private final UserRepo userRepo;
     private final JwtTokenFilter jwtTokenFilter;
 
-    private final String[] requestForAll = { "/car/all", "/car/find/*", "/user/login", "/user/add", "user/find/*"};
+    private final String[] requestForAll = { "/car/all", "/car/find/*", "/user/login", "/user/add"};
     private final String[] requestForUsers = {"user/find/*"};
 
     @Autowired
@@ -35,6 +36,16 @@ public class SecurityConfiguration {
         this.userRepo = userRepo;
         this.jwtTokenFilter = jwtTokenFilter;
     }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues();
+        config.addAllowedHeader("Access-Control-Allow-Origin");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
+
     @Bean
     public UserDetailsService userDetailsService(){
         return username -> userRepo.findByEmail(username)
@@ -54,7 +65,15 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
-        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
+
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("*"); // Allow all origins
+        configuration.addAllowedHeader("*"); // Allow all headers
+        configuration.addAllowedMethod("*"); // Allow all methods
+//        configuration.setAllowCredentials(true);
+
+//        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
+        http.cors().configurationSource(request -> configuration);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests()
                 .requestMatchers(requestForAll).permitAll()

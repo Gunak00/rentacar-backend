@@ -56,7 +56,7 @@ public class UserController {
                     .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                     .sign(algorithm);
 
-            AuthResponse authResponse = new AuthResponse(user.getEmail(), token);
+            AuthResponse authResponse = new AuthResponse(user.getEmail(), token, user.getRole());
             return ResponseEntity.ok(authResponse);
         } catch (UsernameNotFoundException exception) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

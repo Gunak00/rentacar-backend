@@ -24,7 +24,8 @@ public class Car implements Serializable {
     private String name;
     private String model;
     private String category;
-    private Long priceForDay;
+    private Long priceShortTerm;
+    private Long priceLongTerm;
     private Long manufactureYear;
     private Integer numberOfPeople;
     private Boolean airCon;
