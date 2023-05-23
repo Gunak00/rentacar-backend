@@ -28,7 +28,7 @@ public class SecurityConfiguration {
     private final UserRepo userRepo;
     private final JwtTokenFilter jwtTokenFilter;
 
-    private final String[] requestForAll = { "/car/all", "/car/find/*", "/user/login", "/user/add"};
+    private final String[] requestForAll = { "/car/all", "/car/find/*", "/car/image/*/*", "/user/login", "/user/add"};
     private final String[] requestForUsers = {"user/find/*"};
 
     @Autowired
