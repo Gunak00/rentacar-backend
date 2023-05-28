@@ -12,7 +12,6 @@ public class ReservationService {
     private final EmailService emailService;
 
     public String sendEmail(Reservation reservation) {
-
         return emailService.sendSimpleMail(getEmailDetails(reservation));
     }
 

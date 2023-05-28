@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Reservation {
-    private Long id;
+    private Long carId;
     private String recipient;
     private String carName;
     private String carModel;

@@ -18,8 +18,8 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @PostMapping("/sendReservation")
-    public ResponseEntity<?> sendConfirmation(@RequestBody Reservation reservation){
+    public ResponseEntity<Reservation> sendConfirmation(@RequestBody Reservation reservation){
         reservationService.sendEmail(reservation);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
 }

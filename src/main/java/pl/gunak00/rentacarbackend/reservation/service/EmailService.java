@@ -1,6 +1,5 @@
 package pl.gunak00.rentacarbackend.reservation.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,8 +10,12 @@ import pl.gunak00.rentacarbackend.reservation.model.EmailDetails;
 @Service
 public class EmailService {
 
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
     @Value("${spring.mail.username}") private String sender;
+
+    public EmailService(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
 
     public String sendSimpleMail(EmailDetails emailDetails){
 
