@@ -17,6 +17,7 @@ import pl.gunak00.rentacarbackend.user.dto.AuthRequest;
 import pl.gunak00.rentacarbackend.user.dto.AuthResponse;
 import pl.gunak00.rentacarbackend.user.dto.UserDto;
 import pl.gunak00.rentacarbackend.user.enums.UserRole;
+import pl.gunak00.rentacarbackend.user.exceptions.EmailAlreadyExistsException;
 import pl.gunak00.rentacarbackend.user.model.User;
 import pl.gunak00.rentacarbackend.user.services.UserService;
 
@@ -84,12 +85,21 @@ public class UserController {
 
     @PostMapping("/add")
     public ResponseEntity<User> addUser(@RequestBody UserDto userDto){
+
+
+
         User user = new User(userDto.getEmail(), userDto.getFirstName(), userDto.getLastName(),
                 passwordEncoder.encode(userDto.getPassword()), userDto.getDrivingLicenseNumber(),
                 userDto.getAge(), UserRole.ROLE_USER.toString());
 
-        User newUser = userService.addUser(user);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        try {
+            User newUser = userService.addUser(user);
+            return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+        }catch (EmailAlreadyExistsException e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
+
     }
 
     @PutMapping("/update")

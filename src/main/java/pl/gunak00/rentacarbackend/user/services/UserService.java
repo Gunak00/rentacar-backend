@@ -3,6 +3,7 @@ package pl.gunak00.rentacarbackend.user.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import pl.gunak00.rentacarbackend.user.exceptions.EmailAlreadyExistsException;
 import pl.gunak00.rentacarbackend.user.model.User;
 import pl.gunak00.rentacarbackend.user.repository.UserRepo;
 
@@ -18,6 +19,9 @@ public class UserService {
     }
 
     public User addUser(User user){
+        if (userRepo.existsByEmail(user.getEmail()))
+            throw new EmailAlreadyExistsException("E-mail " + user.getEmail() + " jest już zarejestrowany.");
+
         return userRepo.save(user);
     }
 
