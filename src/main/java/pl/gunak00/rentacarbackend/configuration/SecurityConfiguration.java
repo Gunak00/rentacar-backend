@@ -29,7 +29,7 @@ public class SecurityConfiguration {
     private final JwtTokenFilter jwtTokenFilter;
 
     private final String[] requestForAll = { "/car/all", "/car/find/*", "/car/image/*/*", "/user/login", "/user/add"};
-    private final String[] requestForUsers = {"user/find/*", "/reservation/sendReservation"};
+    private final String[] requestForUsers = {"user/find/*", "/user/find/email/*", "/reservation/sendReservation", "/user/update"};
 
     @Autowired
     public SecurityConfiguration(UserRepo userRepo, JwtTokenFilter jwtTokenFilter) {

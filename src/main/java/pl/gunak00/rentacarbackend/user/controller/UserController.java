@@ -76,6 +76,12 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @GetMapping("/find/email/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable("email") String email){
+        User user = userService.findByEmail(email);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<User> addUser(@RequestBody UserDto userDto){
         User user = new User(userDto.getEmail(), userDto.getFirstName(), userDto.getLastName(),
@@ -87,10 +93,16 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<User> updateUser(@RequestBody UserDto userDto){
-        User user = new User(userDto.getEmail(), userDto.getFirstName(), userDto.getLastName(),
-                passwordEncoder.encode(userDto.getPassword()), userDto.getDrivingLicenseNumber(),
-                userDto.getAge(), UserRole.ROLE_USER.toString());
+    public ResponseEntity<User> updateUser(@RequestBody User user){
+//        User user = new User(userDto.getEmail(), userDto.getFirstName(), userDto.getLastName(),
+//                passwordEncoder.encode(userDto.getPassword()), userDto.getDrivingLicenseNumber(),
+//                userDto.getAge(), UserRole.ROLE_USER.toString());
+
+
+        String password = user.getPassword();
+        if (!(password.startsWith("$2a$") || password.startsWith("$2b$") || password.startsWith("$2y$"))){
+            user.setPassword(passwordEncoder.encode(password));
+        }
 
         User updateUser = userService.updateUser(user);
         return new ResponseEntity<>(updateUser, HttpStatus.OK);
