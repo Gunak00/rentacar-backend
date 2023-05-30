@@ -28,9 +28,8 @@ public class SecurityConfiguration {
     private final UserRepo userRepo;
     private final JwtTokenFilter jwtTokenFilter;
 
-    private final String[] requestForAll = { "/car/all", "/car/find/*", "/car/image/*/*", "/user/login", "/user/add",
-            "/reservation/sendReservation"};
-    private final String[] requestForUsers = {"user/find/*"};
+    private final String[] requestForAll = { "/car/all", "/car/find/*", "/car/image/*/*", "/user/login", "/user/add"};
+    private final String[] requestForUsers = {"user/find/*", "/reservation/sendReservation"};
 
     @Autowired
     public SecurityConfiguration(UserRepo userRepo, JwtTokenFilter jwtTokenFilter) {
@@ -78,7 +77,7 @@ public class SecurityConfiguration {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeHttpRequests()
                 .requestMatchers(requestForAll).permitAll()
-                .requestMatchers(requestForUsers).hasRole("USER")
+                .requestMatchers(requestForUsers).hasAnyRole("USER", "ADMIN")
                 .anyRequest().hasRole("ADMIN");
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
