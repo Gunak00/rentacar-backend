@@ -60,34 +60,32 @@ public class UserController {
 
             AuthResponse authResponse = new AuthResponse(user.getEmail(), token, user.getRole());
             return ResponseEntity.ok(authResponse);
-        }catch (AuthenticationException exception){
+        } catch (AuthenticationException exception) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<User>> getAllUsers(){
+    public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.findAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity<User> getUser(@PathVariable("id") Long id){
+    public ResponseEntity<User> getUser(@PathVariable("id") Long id) {
         User user = userService.findById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping("/find/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable("email") String email){
+    public ResponseEntity<User> getUserByEmail(@PathVariable("email") String email) {
         User user = userService.findByEmail(email);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<User> addUser(@RequestBody UserDto userDto){
-
-
+    public ResponseEntity<User> addUser(@RequestBody UserDto userDto) {
 
         User user = new User(userDto.getEmail(), userDto.getFirstName(), userDto.getLastName(),
                 passwordEncoder.encode(userDto.getPassword()), userDto.getDrivingLicenseNumber(),
@@ -96,22 +94,20 @@ public class UserController {
         try {
             User newUser = userService.addUser(user);
             return new ResponseEntity<>(newUser, HttpStatus.CREATED);
-        }catch (EmailAlreadyExistsException e){
+        } catch (EmailAlreadyExistsException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-
-
     }
 
     @PutMapping("/update")
-    public ResponseEntity<User> updateUser(@RequestBody User user){
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
 //        User user = new User(userDto.getEmail(), userDto.getFirstName(), userDto.getLastName(),
 //                passwordEncoder.encode(userDto.getPassword()), userDto.getDrivingLicenseNumber(),
 //                userDto.getAge(), UserRole.ROLE_USER.toString());
 
 
         String password = user.getPassword();
-        if (!(password.startsWith("$2a$") || password.startsWith("$2b$") || password.startsWith("$2y$"))){
+        if (!(password.startsWith("$2a$") || password.startsWith("$2b$") || password.startsWith("$2y$"))) {
             user.setPassword(passwordEncoder.encode(password));
         }
 
@@ -120,7 +116,7 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id){
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
